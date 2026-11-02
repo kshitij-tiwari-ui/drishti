@@ -1,223 +1,309 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Drishti — See Beyond the Screen</title>
-<meta name="description" content="Drishti turns screenshots, posters, menus and charts into clear text and audio.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Drishti – Screen Companion for Low Vision</title>
+<meta name="description" content="Upload any image, poster or screenshot. Drishti reads the text, translates it into 130+ languages and speaks it aloud.">
+<style>
+:root{
+  --bg1:#0b1020;--bg2:#1a1446;--card:rgba(255,255,255,.07);--bd:rgba(255,255,255,.14);
+  --fg:#f5f7ff;--mut:#aab2d5;--acc:#7c9cff;--acc2:#b57cff;--ok:#5be4a8;--r:18px;--fs:18px;
+}
+body.hc{--bg1:#000;--bg2:#000;--card:#0a0a0a;--bd:#ffe600;--fg:#ffe600;--mut:#fff;--acc:#00e5ff;--acc2:#00e5ff}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;min-height:100vh;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--fg);
+  background:radial-gradient(1200px 600px at 10% -10%,#2b2a7a55,transparent),radial-gradient(900px 500px at 100% 0,#7a2a8a44,transparent),linear-gradient(160deg,var(--bg1),var(--bg2));
+  background-attachment:fixed;line-height:1.6}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .eye{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 8px 30px #7c9cff55}
+h1{font-size:1.5rem;margin:0;letter-spacing:.3px}
+.tag{color:var(--mut);font-size:.85rem;margin:0}
+.hero{margin:18px 0 22px}
+.hero h2{font-size:1.7rem;line-height:1.25;margin:0 0 6px}
+.hero p{color:var(--mut);margin:0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin:14px 0;backdrop-filter:blur(10px)}
+.card h3{margin:0 0 10px;font-size:.8rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--mut)}
+.mode{display:inline-flex;border:1px solid var(--bd);border-radius:999px;padding:3px;background:var(--card)}
+.mode button{border:0;background:transparent;color:var(--mut);padding:8px 16px;border-radius:999px;font:inherit;font-size:.85rem;cursor:pointer}
+.mode button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-weight:600}
+.drop{border:2px dashed var(--bd);border-radius:var(--r);padding:28px 16px;text-align:center;cursor:pointer;transition:.2s}
+.drop:hover,.drop.drag{border-color:var(--acc);background:#7c9cff14}
+.drop .big{font-size:2.2rem}
+.drop b{display:block;margin-top:4px}
+.drop small{color:var(--mut)}
+#preview{max-width:100%;max-height:340px;border-radius:12px;margin-top:12px;display:none;cursor:zoom-in;transition:.2s}
+#preview.zoom{max-height:none;cursor:zoom-out}
+label{display:block;font-size:.8rem;color:var(--mut);margin:0 0 4px}
+select,input[type=text],input[type=password]{width:100%;padding:11px 12px;font:inherit;font-size:.95rem;color:var(--fg);background:#0006;border:1px solid var(--bd);border-radius:12px}
+select option{color:#000}
+body.hc select,body.hc input{background:#000}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-size:.9rem;padding:10px 16px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--fg);cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--acc);transform:translateY(-1px)}
+.btn.pri{background:linear-gradient(135deg,var(--acc),var(--acc2));border:0;color:#fff;font-weight:600}
+.btn:focus-visible,select:focus-visible,input:focus-visible,.drop:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.adv{display:none}
+body.advanced .adv{display:block}
+.bar{height:6px;border-radius:99px;background:#fff2;overflow:hidden;margin-top:10px;display:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .2s}
+#status{color:var(--ok);font-size:.9rem;min-height:1.4em;margin-top:8px}
+.text{white-space:pre-wrap;font-size:1.1rem;min-height:3em}
+.text[dir=rtl]{text-align:right}
+.chip{display:inline-block;font-size:.72rem;padding:2px 10px;border-radius:99px;background:#7c9cff33;margin-left:8px;color:var(--fg)}
+.sw{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--fg);margin:6px 0}
+.sw input{width:auto;transform:scale(1.2)}
+input[type=range]{width:100%;accent-color:var(--acc)}
+footer{color:var(--mut);font-size:.8rem;text-align:center;margin-top:30px}
+.note{font-size:.8rem;color:var(--mut);margin-top:6px}
+</style>
 </head>
 <body>
-<a class="skip-link" href="#workspace">Skip to workspace</a>
-
-<header class="site-header">
-  <div class="container nav">
-    <a class="brand" href="#home" aria-label="Drishti home">
-      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M5 16s4-7 11-7 11 7 11 7-4 7-11 7S5 16 5 16Z" fill="none" stroke="#fff" stroke-width="2"/><circle cx="16" cy="16" r="3.5" fill="#fff"/></svg>
-      <span class="brand-text"><strong>Drishti</strong><small>Your Intelligent Screen Companion</small></span>
-    </a>
-    <button class="icon-btn nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open menu">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-    <nav class="nav-menu" id="navMenu" aria-label="Main">
-      <a href="#home">Home</a>
-      <a href="#workspace">Workspace</a>
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-      <a class="btn btn-primary" href="#workspace">Start Understanding</a>
-    </nav>
-  </div>
-
-  <div class="a11y-bar" role="region" aria-label="Accessibility controls">
-    <div class="container a11y-inner">
-      <span class="a11y-title">Accessibility</span>
-      <div class="a11y-group" role="group" aria-label="Text size">
-        <button class="chip" id="textDown" aria-label="Decrease text size">A−</button>
-        <output id="textLevel" aria-live="polite">100%</output>
-        <button class="chip" id="textUp" aria-label="Increase text size">A+</button>
-        <button class="chip" id="textReset">Reset</button>
-      </div>
-      <button class="chip chip-toggle" id="contrastToggle" aria-pressed="false">
-        <span class="chip-dot" aria-hidden="true"></span>High contrast: <span id="contrastState">Off</span>
-      </button>
-      <button class="chip" id="settingsBtn" aria-haspopup="dialog">Settings</button>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <div class="eye" aria-hidden="true">👁</div>
+      <div><h1>Drishti · दृष्टि</h1><p class="tag">A screen companion for low vision</p></div>
     </div>
-  </div>
-</header>
+    <div class="mode" role="group" aria-label="Mode">
+      <button id="mBasic" class="on" aria-pressed="true">Basic</button>
+      <button id="mAdv" aria-pressed="false">Advanced</button>
+    </div>
+  </header>
 
-<main id="main">
-  <section class="hero" id="home" aria-labelledby="heroTitle">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <h1 id="heroTitle">Digital content, made understandable.</h1>
-        <p class="lead">Turn visual information into clear, accessible experiences. Upload an image, understand what matters, and choose how you want to access it.</p>
-        <div class="cta-row">
-          <a class="btn btn-primary btn-lg" href="#workspace">Start Understanding</a>
-          <a class="btn btn-ghost btn-lg" href="#how">See How It Works</a>
-        </div>
-        <p class="note">Drishti is an accessibility companion. It does not replace a screen reader.</p>
-      </div>
+  <section class="hero">
+    <h2>Upload any image. Understand it in your language.</h2>
+    <p>Posters, menus, timetables, screenshots. Drishti reads the text, translates it into 130+ languages and speaks it aloud.</p>
+  </section>
 
-      <div class="hero-art" role="img" aria-label="Illustration: a timetable image on the left becomes readable text and a sound icon on the right.">
-        <div class="art-card art-source" aria-hidden="true">
-          <div class="art-bar"><i></i><i></i><i></i></div>
-          <div class="tt"><b>Mon</b><b>Tue</b><b>Wed</b>
-            <span class="c1">Maths</span><span class="c2">Physics</span><span class="c3">Lab</span>
-            <span class="c2">Chem</span><span class="c3">Maths</span><span class="c1">Free</span></div>
+  <section class="card">
+    <h3>1 · Upload</h3>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload an image">
+      <div class="big" aria-hidden="true">📷</div>
+      <b>Tap to choose an image or drop it here</b>
+      <small>PNG, JPG, WEBP · you can also paste a screenshot (Ctrl+V)</small>
+    </div>
+    <input type="file" id="file" accept="image/*" hidden>
+    <img id="preview" alt="Uploaded image preview. Tap to zoom.">
+    <div class="bar" id="bar"><i id="barI"></i></div>
+    <div id="status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="card">
+    <h3>2 · Translate to</h3>
+    <div class="grid">
+      <div>
+        <label for="target">Target language (130+)</label>
+        <select id="target"></select>
+      </div>
+      <div class="adv">
+        <label for="source">Source language</label>
+        <select id="source"></select>
+      </div>
+      <div class="adv">
+        <label for="ocr">Text language in image (OCR)</label>
+        <select id="ocr">
+          <option value="eng">English</option>
+          <option value="eng+hin">English + Hindi</option>
+          <option value="hin">Hindi</option>
+          <option value="ben">Bengali</option>
+          <option value="tam">Tamil</option>
+          <option value="tel">Telugu</option>
+          <option value="mar">Marathi</option>
+          <option value="guj">Gujarati</option>
+          <option value="kan">Kannada</option>
+          <option value="mal">Malayalam</option>
+          <option value="pan">Punjabi</option>
+          <option value="urd">Urdu</option>
+          <option value="ara">Arabic</option>
+          <option value="spa">Spanish</option>
+          <option value="fra">French</option>
+          <option value="deu">German</option>
+          <option value="por">Portuguese</option>
+          <option value="ita">Italian</option>
+          <option value="rus">Russian</option>
+          <option value="chi_sim">Chinese (Simplified)</option>
+          <option value="jpn">Japanese</option>
+          <option value="kor">Korean</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="adv" style="margin-top:12px">
+      <div class="grid">
+        <div>
+          <label for="engine">Translation engine</label>
+          <select id="engine">
+            <option value="free">Free (no key, limited)</option>
+            <option value="google">Google Cloud Translation – Basic (v2)</option>
+          </select>
         </div>
-        <svg class="art-flow" viewBox="0 0 60 24" aria-hidden="true"><path d="M2 12h50M44 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <div class="art-card art-result" aria-hidden="true">
-          <p class="art-h">What matters</p>
-          <p><mark>Mon 9:00</mark> Maths, Room 204</p>
-          <p><mark>Tue 11:30</mark> Physics lab</p>
-          <p><mark>Wed 2:00</mark> Free period</p>
-          <div class="art-audio"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/><path d="M16 8a5 5 0 0 1 0 8M18.5 5.5a9 9 0 0 1 0 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Listen</div>
+        <div>
+          <label for="key">Google API key (only for Google engine)</label>
+          <input type="password" id="key" placeholder="AIza..." autocomplete="off">
         </div>
       </div>
+      <div class="note">Google Advanced (v3) needs a server because it uses OAuth. For a demo, Basic (v2) with an API key is enough.</div>
     </div>
   </section>
 
-  <section class="workspace" id="workspace" aria-labelledby="wsTitle">
-    <div class="container">
-      <div class="section-head">
-        <h2 id="wsTitle">Workspace</h2>
-        <p>Add an image on the left. Your results appear on the right.</p>
-      </div>
-
-      <div class="ws-grid">
-        <!-- LEFT: upload -->
-        <div class="panel" aria-labelledby="uploadTitle">
-          <h3 id="uploadTitle">1. Add your image</h3>
-
-          <div class="dropzone" id="dropzone">
-            <svg class="dz-icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="8" width="36" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="17" cy="19" r="3.5" fill="currentColor"/><path d="m8 36 11-10 8 7 5-4 9 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
-            <p class="dz-title">Drag and drop an image here</p>
-            <p class="dz-sub">or</p>
-            <button type="button" class="btn btn-primary" id="browseBtn">Browse images</button>
-            <button type="button" class="btn btn-ghost btn-sm" id="sampleBtn">Try a sample timetable</button>
-            <p class="dz-hint">PNG, JPG or WEBP. Up to 10 MB.</p>
-            <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" hidden>
-          </div>
-
-          <p class="error" id="uploadError" role="alert" hidden></p>
-
-          <figure class="preview" id="preview" hidden>
-            <div class="zoom-wrap" id="zoomWrap" tabindex="0" role="group" aria-label="Image preview. Scroll or use arrow keys to move when magnified."><img id="previewImg" alt=""></div>
-            <div class="zoom-ctl"><label for="zoomRange">Magnify</label><input type="range" id="zoomRange" min="100" max="300" step="25" value="100"><output id="zoomOut" for="zoomRange">100%</output></div>
-            <figcaption>
-              <span id="fileMeta"></span>
-              <button type="button" class="btn btn-ghost btn-sm" id="removeBtn">Remove image</button>
-            </figcaption>
-          </figure>
-
-          <button type="button" class="btn btn-primary btn-lg btn-block" id="analyzeBtn" disabled aria-describedby="analyzeHelp">Understand this image</button>
-          <p class="help" id="analyzeHelp">Add an image first to turn this button on.</p>
-          <div id="historyBox" hidden><h4 class="mini">Recent in this session</h4><ul class="history" id="history"></ul></div>
-        </div>
-
-        <!-- RIGHT: output -->
-        <div class="panel" aria-labelledby="outTitle">
-          <h3 id="outTitle">2. Your accessible results</h3>
-          <p class="status" id="status" role="status" aria-live="polite">Waiting for an image.</p>
-
-          <div class="empty" id="emptyState">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="8" width="44" height="48" rx="8" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M20 22h24M20 32h24M20 42h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-            <p class="empty-title">Nothing to show yet</p>
-            <p>After you add and analyse an image, you will see here:</p>
-            <ul>
-              <li>What the image shows</li>
-              <li>The text found inside it</li>
-              <li>Key dates, times, names and prices</li>
-              <li>A simple explanation you can listen to</li>
-            </ul>
-          </div>
-
-          <div class="loading" id="loading" hidden aria-hidden="true">
-            <div class="spinner"></div>
-            <p>Reading your image…</p>
-            <div class="skel"></div><div class="skel w80"></div><div class="skel w60"></div>
-          </div>
-
-          <p class="notice" id="notice" hidden></p>
-          <div class="results" id="results" hidden>
-            <article class="res"><h4>Image description <span class="badge" id="descBadge"></span></h4><div class="res-body" data-field="description"></div></article>
-            <article class="res"><h4>Simple explanation <span class="badge" id="simpleBadge"></span></h4><div class="res-body" data-field="simple"></div></article>
-            <article class="res"><h4>Important information</h4><ul class="chips" data-field="info"></ul><p class="help" id="infoEmpty" hidden>No dates, times or prices were found.</p><div class="res-body extra" data-field="attention"></div></article>
-            <article class="res"><h4>Extracted text <span class="badge badge-ocr">Read from the image by OCR</span></h4><div class="res-body mono" data-field="text"></div></article>
-            <div class="res-actions"><button type="button" class="btn btn-ghost btn-sm" id="copyBtn">Copy results</button><button type="button" class="btn btn-ghost btn-sm" id="downloadBtn">Download report (.txt)</button></div>
-          </div>
-          <button type="button" class="btn btn-primary" id="retryBtn" hidden>Try again</button>
-
-          <section class="audio" aria-labelledby="audioTitle">
-            <h4 id="audioTitle">Listen</h4>
-            <div class="audio-row"><label for="readSelect">What to read</label>
-              <select id="readSelect"><option value="simple">Simple explanation</option><option value="description">Image description</option><option value="text">Extracted text</option><option value="info">Important information</option></select></div>
-            <div class="audio-btns">
-              <button type="button" class="btn btn-primary" id="speakBtn" disabled>Listen</button>
-              <button type="button" class="btn btn-ghost" id="pauseBtn" disabled>Pause</button>
-              <button type="button" class="btn btn-ghost" id="stopBtn" disabled>Stop</button>
-            </div>
-            <p class="help" id="audioHelp">Listen turns on after your image is analysed. Voice and speed are in Settings.</p>
-          </section>
-        </div>
-      </div>
+  <section class="card">
+    <h3>3 · Result</h3>
+    <div class="row" style="margin-bottom:10px">
+      <button class="btn pri" id="speak">🔊 Listen</button>
+      <button class="btn" id="stop">⏹ Stop</button>
+      <button class="btn" id="copy">📋 Copy</button>
+      <button class="btn" id="dl">⬇ Save .txt</button>
+    </div>
+    <div><b>Translation</b><span class="chip" id="tname"></span></div>
+    <div class="text" id="out">Your translation will appear here.</div>
+    <div class="adv" style="margin-top:14px">
+      <b>Original text</b>
+      <div class="text" id="orig" style="color:var(--mut)"></div>
     </div>
   </section>
 
-  <section class="features" id="features" aria-labelledby="featTitle">
-    <div class="container">
-      <div class="section-head"><h2 id="featTitle">Built for people who struggle to read screens</h2><p>Drishti helps people with low vision, and anyone who finds dense visuals hard to follow.</p></div>
-      <ul class="feat-grid">
-        <li><h3>Text, read out</h3><p>OCR pulls the words out of timetables, menus and posters so you can read or hear them.</p></li>
-        <li><h3>Plain-language explanation</h3><p>With an AI key set up, Drishti describes the layout and says what to pay attention to.</p></li>
-        <li><h3>Honest labels</h3><p>Every result says whether it came from OCR or AI, so you know what to double-check.</p></li>
-        <li><h3>Your display, your way</h3><p>Larger text, high contrast, image magnifier, and adjustable speech speed and voice.</p></li>
-      </ul>
+  <section class="card">
+    <h3>Viewing aids</h3>
+    <div class="row" style="margin-bottom:8px">
+      <button class="btn" id="minus" aria-label="Smaller text">A−</button>
+      <button class="btn" id="plus" aria-label="Larger text">A+</button>
+      <button class="btn" id="contrast">◐ High contrast</button>
+    </div>
+    <label class="sw"><input type="checkbox" id="auto" checked> Read aloud automatically</label>
+    <div class="adv">
+      <label for="rate" style="margin-top:8px">Speech speed: <span id="rv">1.0</span>×</label>
+      <input type="range" id="rate" min="0.5" max="1.5" step="0.1" value="1">
     </div>
   </section>
 
-  <section class="how" id="how" aria-labelledby="howTitle">
-    <div class="container">
-      <div class="section-head">
-        <h2 id="howTitle">How it works</h2>
-        <p>Three steps. No settings to learn.</p>
-      </div>
-      <ol class="steps">
-        <li><span class="step-n" aria-hidden="true">01</span><h3>Upload</h3><p>Choose a screenshot, poster, menu, timetable or chart.</p></li>
-        <li><span class="step-n" aria-hidden="true">02</span><h3>Understand</h3><p>AI identifies content and extracts important information.</p></li>
-        <li><span class="step-n" aria-hidden="true">03</span><h3>Access</h3><p>Read, listen, translate and understand information in an accessible format.</p></li>
-      </ol>
-    </div>
-  </section>
-</main>
+  <footer>Drishti assists with digital content. It does not replace a full screen reader.</footer>
+</div>
 
-<footer class="site-footer">
-  <div class="container foot">
-    <div>
-      <a class="brand" href="#home" aria-label="Drishti home">
-        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M5 16s4-7 11-7 11 7 11 7-4 7-11 7S5 16 5 16Z" fill="none" stroke="#fff" stroke-width="2"/><circle cx="16" cy="16" r="3.5" fill="#fff"/></svg>
-        <span class="brand-text"><strong>Drishti</strong></span>
-      </a>
-      <p class="foot-desc">An accessibility companion that makes images, posters and documents easier to read and hear.</p>
-    </div>
-    <nav aria-label="Footer"><a href="#home">Home</a><a href="#workspace">Workspace</a><a href="#how">How it works</a></nav>
-    <p class="foot-tag">Your Intelligent Screen Companion</p>
-  </div>
-</footer>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const LANGS=`af Afrikaans|sq Albanian|am Amharic|ar Arabic|hy Armenian|as Assamese|ay Aymara|az Azerbaijani|bm Bambara|eu Basque|be Belarusian|bn Bengali|bho Bhojpuri|bs Bosnian|bg Bulgarian|ca Catalan|ceb Cebuano|zh-CN Chinese (Simplified)|zh-TW Chinese (Traditional)|co Corsican|hr Croatian|cs Czech|da Danish|dv Dhivehi|doi Dogri|nl Dutch|en English|eo Esperanto|et Estonian|ee Ewe|fil Filipino|fi Finnish|fr French|fy Frisian|gl Galician|ka Georgian|de German|el Greek|gn Guarani|gu Gujarati|ht Haitian Creole|ha Hausa|haw Hawaiian|he Hebrew|hi Hindi|hmn Hmong|hu Hungarian|is Icelandic|ig Igbo|ilo Ilocano|id Indonesian|ga Irish|it Italian|ja Japanese|jv Javanese|kn Kannada|kk Kazakh|km Khmer|rw Kinyarwanda|gom Konkani|ko Korean|kri Krio|ku Kurdish (Kurmanji)|ckb Kurdish (Sorani)|ky Kyrgyz|lo Lao|la Latin|lv Latvian|ln Lingala|lt Lithuanian|lg Luganda|lb Luxembourgish|mk Macedonian|mai Maithili|mg Malagasy|ms Malay|ml Malayalam|mt Maltese|mi Maori|mr Marathi|mni-Mtei Meiteilon (Manipuri)|lus Mizo|mn Mongolian|my Myanmar (Burmese)|ne Nepali|no Norwegian|ny Nyanja (Chichewa)|or Odia (Oriya)|om Oromo|ps Pashto|fa Persian|pl Polish|pt Portuguese|pa Punjabi|qu Quechua|ro Romanian|ru Russian|sm Samoan|sa Sanskrit|gd Scots Gaelic|nso Sepedi|sr Serbian|st Sesotho|sn Shona|sd Sindhi|si Sinhala|sk Slovak|sl Slovenian|so Somali|es Spanish|su Sundanese|sw Swahili|sv Swedish|tl Tagalog|tg Tajik|ta Tamil|tt Tatar|te Telugu|th Thai|ti Tigrinya|ts Tsonga|tr Turkish|tk Turkmen|ak Twi|uk Ukrainian|ur Urdu|ug Uyghur|uz Uzbek|vi Vietnamese|cy Welsh|xh Xhosa|yi Yiddish|yo Yoruba|zu Zulu`
+  .split('|').map(s=>{const i=s.indexOf(' ');return [s.slice(0,i),s.slice(i+1)]});
+const RTL=['ar','he','fa','ur','ps','sd','ug','ckb','dv','yi'];
+const names=Object.fromEntries(LANGS);
 
-<dialog id="settingsDialog" aria-labelledby="setTitle">
-  <h2 id="setTitle">Settings</h2>
-  <p class="help">Saved on this device only. Text size and contrast are in the bar at the top.</p>
-  <div class="audio-row"><label for="rateSelect">Speech speed</label><select id="rateSelect"><option value="0.75">Slow</option><option value="1" selected>Normal</option><option value="1.25">Fast</option><option value="1.5">Very fast</option></select></div>
-  <div class="audio-row"><label for="voiceSelect">Voice</label><select id="voiceSelect"><option value="">Automatic</option></select></div>
-  <div class="audio-row"><label for="zoomDefault">Image magnification</label><select id="zoomDefault"><option value="100">100%</option><option value="150">150%</option><option value="200">200%</option><option value="300">300%</option></select></div>
-  <p class="help" id="voiceHelp"></p>
-  <button type="button" class="btn btn-primary" id="settingsClose">Done</button>
-</dialog>
+LANGS.forEach(([c,n])=>{
+  $('target').add(new Option(`${n} (${c})`,c,false,c==='hi'));
+  $('source').add(new Option(`${n} (${c})`,c));
+});
+$('source').insertBefore(new Option('Auto-detect','auto',true,true),$('source').firstChild);
+$('source').value='auto';
 
-<script src="/static/js/script.js"></script>
+// modes
+function setMode(adv){
+  document.body.classList.toggle('advanced',adv);
+  $('mAdv').classList.toggle('on',adv);$('mBasic').classList.toggle('on',!adv);
+  $('mAdv').setAttribute('aria-pressed',adv);$('mBasic').setAttribute('aria-pressed',!adv);
+}
+$('mBasic').onclick=()=>setMode(false);$('mAdv').onclick=()=>setMode(true);
+
+// upload
+const drop=$('drop');
+drop.onclick=()=>$('file').click();
+drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('file').click()}};
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag')}));
+drop.addEventListener('drop',e=>handle(e.dataTransfer.files[0]));
+$('file').onchange=e=>handle(e.target.files[0]);
+document.addEventListener('paste',e=>{const f=[...e.clipboardData.files].find(f=>f.type.startsWith('image/'));if(f)handle(f)});
+$('preview').onclick=()=>$('preview').classList.toggle('zoom');
+$('target').onchange=()=>{if(lastText)run(lastText)};
+
+let lastText='',lastFile=null;
+function status(t){$('status').textContent=t}
+function prog(p){$('bar').style.display=p==null?'none':'block';if(p!=null)$('barI').style.width=(p*100)+'%'}
+
+async function handle(f){
+  if(!f||!f.type.startsWith('image/'))return status('Please choose an image file.');
+  lastFile=f;
+  const p=$('preview');p.src=URL.createObjectURL(f);p.style.display='block';
+  try{
+    status('Reading text from the image…');prog(0.02);
+    const {data:{text}}=await Tesseract.recognize(f,$('ocr').value,{logger:m=>{if(m.status==='recognizing text')prog(m.progress*.8)}});
+    const clean=text.replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+    $('orig').textContent=clean;
+    if(!clean){prog(null);status('No text found in this image.');$('out').textContent='';return}
+    lastText=clean;await run(clean);
+  }catch(e){prog(null);status('Error: '+e.message)}
+}
+
+async function run(text){
+  try{
+    const t=$('target').value;
+    status('Translating to '+names[t]+'…');prog(.85);
+    const out=await translate(text,t);
+    const el=$('out');el.textContent=out;el.dir=RTL.includes(t)?'rtl':'ltr';
+    $('tname').textContent=names[t];
+    prog(1);setTimeout(()=>prog(null),400);status('Done ✓');
+    if($('auto').checked)speak(out,t);
+  }catch(e){prog(null);status('Error: '+e.message)}
+}
+
+async function translate(text,target){
+  const src=$('source').value;
+  if(target==='en'&&src==='en')return text;
+  if($('engine').value==='google'){
+    const key=$('key').value.trim();
+    if(!key)throw new Error('Please enter your Google API key or switch to the free engine.');
+    const body={q:text,target,format:'text'};if(src!=='auto')body.source=src;
+    const r=await fetch('https://translation.googleapis.com/language/translate/v2?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const j=await r.json();if(!r.ok)throw new Error(j.error?.message||'Google translation failed');
+    return j.data.translations[0].translatedText;
+  }
+  // free engine (MyMemory), chunked
+  const chunks=[];let cur='';
+  for(const line of text.split('\n')){
+    if((cur+line).length>420){if(cur)chunks.push(cur);cur=line}else cur+=(cur?'\n':'')+line;
+  }
+  if(cur)chunks.push(cur);
+  const pair=(src==='auto'?'Autodetect':src)+'|'+target;
+  const res=[];
+  for(const c of chunks){
+    const r=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(c)+'&langpair='+encodeURIComponent(pair));
+    const j=await r.json();
+    if(j.responseStatus&&j.responseStatus!==200)throw new Error(j.responseDetails||'Free translation limit reached. Try Advanced → Google engine.');
+    res.push(j.responseData.translatedText);
+  }
+  return res.join('\n');
+}
+
+// speech
+function speak(t,code){
+  if(!t||!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  code=code||$('target').value;
+  const map={'zh-CN':'zh-CN','zh-TW':'zh-TW','fil':'fil-PH','he':'he-IL','no':'nb-NO'};
+  const lang=map[code]||code;
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang=lang;u.rate=parseFloat($('rate').value);
+  const v=speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith(lang.toLowerCase().split('-')[0]));
+  if(v)u.voice=v;else status('No voice installed for '+names[code]+' on this device. Text is still shown.');
+  speechSynthesis.speak(u);
+}
+speechSynthesis.onvoiceschanged=()=>{};
+$('speak').onclick=()=>speak($('out').textContent);
+$('stop').onclick=()=>speechSynthesis.cancel();
+$('rate').oninput=e=>$('rv').textContent=(+e.target.value).toFixed(1);
+
+// tools
+$('copy').onclick=async()=>{await navigator.clipboard.writeText($('out').textContent);status('Copied ✓')};
+$('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([$('out').textContent],{type:'text/plain'}));a.download='drishti-translation.txt';a.click()};
+
+// viewing aids
+let fs=18;
+$('plus').onclick=()=>{fs=Math.min(40,fs+3);document.documentElement.style.setProperty('--fs',fs+'px')};
+$('minus').onclick=()=>{fs=Math.max(14,fs-3);document.documentElement.style.setProperty('--fs',fs+'px')};
+$('contrast').onclick=()=>document.body.classList.toggle('hc');
+</script>
 </body>
 </html>
