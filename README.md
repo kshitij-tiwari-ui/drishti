@@ -1,3 +1,5 @@
+> **Hackathon Submission:** The latest version of Drishti is available on the `main` branch. Please use this branch for evaluation. The `backup-stable` branch is maintained only as a backup.
+
 # 👁️ Drishti – Screen Companion for Low Vision
 
 **Making digital information more accessible, understandable, and inclusive.**
