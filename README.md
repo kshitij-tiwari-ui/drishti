@@ -1,75 +1,86 @@
-# 👁️ Drishti: Your Intelligent Screen Companion
+# 👁️ Drishti – Screen Companion for Low Vision
 
-> A web app that reads text from screenshots, timetables, menus and charts, describes them with AI, and reads the results aloud.
+**Making digital information more accessible, understandable, and inclusive.**
 
-Drishti is a web app that makes visual content easier to understand and access. Upload a screenshot, timetable, menu, poster or chart, and Drishti extracts the text, describes the image with AI, and reads the results aloud.
+Drishti is an accessibility-focused web application designed to help people with low vision and individuals facing language barriers understand visual digital content.
 
-It's built as an accessibility companion for people who find it hard to read or interpret on-screen content, and it works fully offline in OCR-only mode.
+Users can upload images, posters, menus, timetables, and screenshots. Drishti extracts the text, translates it into their preferred language, and reads the translated content aloud.
 
 ## ✨ Features
 
-- **Text extraction:** reads text from images using Tesseract OCR
-- **AI image understanding:** describes charts, posters and layouts using Google's Gemini vision model
-- **Read aloud:** speaks the extracted text and description
-- **Clear labelling:** results are marked "AI-generated" or "Basic summary, not AI", so you always know the source
-- **Privacy-first:** images are processed in memory and never saved to disk
-- **Pluggable AI:** swap in another vision provider by subclassing `VisionProvider`
+- **Image Upload:** Upload images in PNG, JPG, and WEBP formats.
+- **OCR (Optical Character Recognition):** Extract text from images using Tesseract.js.
+- **Multilingual Translation:** Translate extracted text into 130+ supported languages.
+- **Text-to-Speech:** Listen to translated content using browser speech synthesis.
+- **Automatic Reading:** Automatically read translated text aloud after processing.
+- **High Contrast Mode:** Switch to a high-contrast interface for improved readability.
+- **Text Magnification:** Increase or decrease text size according to your preference.
+- **Multiple Input Methods:** Upload images, drag and drop files, or paste screenshots using Ctrl+V.
+- **Basic and Advanced Modes:** A simple interface for everyday use and additional controls for advanced users.
+- **Translation Options:** Choose between a free translation engine and Google Cloud Translation API.
 
 ## 🛠️ Tech Stack
 
-- **Backend:** Python (Flask)
-- **OCR:** Tesseract
-- **AI vision:** OpenAI-compatible vision API, e.g. Groq
-- **Frontend:** HTML, CSS, JavaScript
+- HTML5
+- CSS3
+- JavaScript
+- Tesseract.js – OCR
+- MyMemory Translation API
+- Google Cloud Translation API
+- Web Speech API – Text-to-Speech
 
-## 🚀 Getting Started (Windows)
+## 🚀 Getting Started
 
-Prerequisites: Python 3.12 or 3.13 and [Tesseract OCR](https://github.com/UB-Mannheim/tesseract/wiki).
+### 1. Clone the repository
 
-```powershell
-py -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env
+```bash
+git clone https://github.com/kshitij-tiwari-ui/drishti.git
+```
+
+### 2. Navigate to the project directory
+
+```bash
+cd drishti
+```
+
+### 3. Run the application
+
+If using the standalone HTML version, open `index.html` in a modern web browser.
+
+If using the Flask-backed version, install the project dependencies and run:
+
+```bash
 python app.py
 ```
 
-Open http://127.0.0.1:5000.
+Open the local URL displayed in your terminal.
 
-- If Tesseract isn't at `C:\Program Files\Tesseract-OCR\tesseract.exe`, set `TESSERACT_CMD` in `.env`.
-- If PowerShell blocks `activate`, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
-- Python 3.15 is a pre-release. If any package fails to install, use Python 3.12 or 3.13 (`py -3.12 -m venv venv`).
+## 📖 How to Use
 
-## 🤖 Enable AI Image Understanding 
+1. Open Drishti in your browser.
+2. Upload an image, drag and drop it, or paste a screenshot.
+3. Select your preferred target language.
+4. Wait for the OCR and translation process to finish.
+5. Read the translated text or select **Listen** to hear it aloud.
+6. Use the viewing aids to adjust text size and contrast.
 
-Drishti works with any OpenAI-compatible vision API. The default setup uses [Groq](https://console.groq.com).
+## 🎯 Project Objective
 
-1. Create an API key with your provider and check its current free-tier terms and limits yourself.
-2. Add these to your `.env`:
+Drishti aims to make everyday digital information more accessible to people with low vision and individuals who face language barriers.
 
-To use another provider, subclass `VisionProvider` in `services/vision_service.py` and return it from `get_provider()`.
+It focuses on assisting users in understanding visual digital content without attempting to replace a complete screen reader.
 
-## 🧪 Tests
+## 🔮 Future Scope
 
-```bash
-python -m unittest discover -s tests -v
-```
+- AI-powered image and layout descriptions.
+- Better recognition of complex documents and tables.
+- Improved multilingual OCR support.
+- More natural and accessible voice options.
+- Enhanced keyboard navigation and screen-reader compatibility.
+- Support for charts, diagrams, and complex visual interfaces.
 
-## 📁 Project Structure
+IIT Jodhpur
 
-```
-drishti/
-├── app.py                  # Routes and validation
-├── services/
-│   ├── ocr_service.py      # Tesseract OCR
-│   ├── vision_service.py   # AI vision providers
-│   └── summary_service.py  # Summaries
-├── templates/index.html
-├── static/
-│   ├── css/style.css
-│   ├── js/script.js
-│   └── images/sample-timetable.png
-└── tests/
-```
+## 📄 License
 
-Uploaded images are processed in memory and never saved to disk. Drishti is an accessibility companion, not a screen reader replacement.
+This project is currently available for demonstration and development purposes. Licensing terms can be added as the project evolves.
