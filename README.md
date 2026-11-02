@@ -19,7 +19,7 @@ It's built as an accessibility companion for people who find it hard to read or 
 
 - **Backend:** Python (Flask)
 - **OCR:** Tesseract
-- **AI vision:** Google Gemini API (optional)
+- **AI vision:** OpenAI-compatible vision API, e.g. Groq
 - **Frontend:** HTML, CSS, JavaScript
 
 ## 🚀 Getting Started (Windows)
